@@ -217,12 +217,18 @@ export class FromCloudFormation {
   }
 
   public static getCfnTag(tag: any): FromCloudFormationResult<CfnTag> {
-    return tag == null
-      ? new FromCloudFormationResult({ } as any) // break the type system - this should be detected at runtime by a tag validator
-      : new FromCloudFormationResult({
+    if (tag == null) {
+      return new FromCloudFormationResult({ } as any); // break the type system - this should be detected at runtime by a tag validator
+    }
+    else if (isResolvableObject(tag)) {
+       return new FromCloudFormationResult(tag);
+    }
+    else {
+      return new FromCloudFormationResult({
         key: tag.Key,
         value: tag.Value,
       });
+    }
   }
 
   /**
